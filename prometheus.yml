@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 30s
+  scrape_timeout: 20s
+
+scrape_configs:
+  - job_name: trello
+    static_configs:
+      - targets: ['localhost:2112']
