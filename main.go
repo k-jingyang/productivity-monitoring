@@ -46,6 +46,7 @@ func MakeFetchListFunc(listEnvName string) FetchListLength {
 }
 
 func main() {
+
 	godotenv.Load()
 	apiKey := os.Getenv("API_KEY")
 	token := os.Getenv("TOKEN")
@@ -53,6 +54,8 @@ func main() {
 	client = trello.NewClient(apiKey, token)
 
 	configureTrelloMetrics()
+
+	log.Println("Starting Trello productivity monitoring exporter...")
 
 	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(":2112", nil)
