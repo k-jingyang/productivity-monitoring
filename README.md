@@ -5,6 +5,7 @@ Tracking my productivity
 - [x] Use build in docker-compose to build and run exporter, then disable `network-mode:host`
 - [x] Add grafana
 - [ ] Host on AWS EC2, and configure HTTPS
+- [ ] Configure AWS flow logs and analyse (for learning)
 - [ ] Configure grafana dashboard
 - [ ] Think about persistent storage
 - [ ] Optimise retrieval of list length by bulk retrieving all cards in a board then grouping them to lists in memory  
