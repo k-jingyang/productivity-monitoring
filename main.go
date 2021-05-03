@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/adlio/trello"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/joho/godotenv"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -26,14 +27,14 @@ const WORK_BOARD_WAITING = "WORK_BOARD_WAITING"
 const WORK_BOARD_INBOX = "WORK_BOARD_INBOX"
 const WORK_BOARD_DONE = "WORK_BOARD_DONE"
 
-var client *trello.Client
+var trelloClient *trello.Client
 
 type FetchListLength func() float64
 
 func MakeFetchListFunc(listEnvName string) FetchListLength {
 	listId := os.Getenv(listEnvName)
 	return func() float64 {
-		list, err := client.GetList(listId, trello.Defaults())
+		list, err := trelloClient.GetList(listId, trello.Defaults())
 		if err != nil {
 			log.Fatalln("Error in retrieving list with id:", listId, "err:", err)
 		}
@@ -51,9 +52,11 @@ func main() {
 	apiKey := os.Getenv("API_KEY")
 	token := os.Getenv("TOKEN")
 
-	client = trello.NewClient(apiKey, token)
+	trelloClient = trello.NewClient(apiKey, token)
+	retryClient := retryablehttp.NewClient()
+	trelloClient.Client = retryClient.StandardClient()
 
-	configureTrelloMetrics()
+	configureExportedTrelloMetrics()
 
 	log.Println("Starting Trello productivity monitoring exporter...")
 
@@ -61,7 +64,7 @@ func main() {
 	http.ListenAndServe(":2112", nil)
 }
 
-func configureTrelloMetrics() {
+func configureExportedTrelloMetrics() {
 	var _ = promauto.NewGaugeFunc(prometheus.GaugeOpts{
 		Name: "personal_board_today_count",
 		Help: "The count of cards in the today list of the Productivity System (Personal) board",
