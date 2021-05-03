@@ -21,12 +21,15 @@ services:
   grafana:
     image: grafana/grafana
     ports: 
-      - 80:3000
+      - 443:3000
     networks:
       - internal_network
     volumes:
       - grafana_storage:/var/lib/grafana
+      - ./cert.pem:/certs/cert.pem
+      - ./key.pem:/certs/key.pem
     env_file: .env
+
 
 networks:
   internal_network:
