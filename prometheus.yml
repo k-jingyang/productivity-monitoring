@@ -1,6 +1,6 @@
 global:
-  scrape_interval: 30s
-  scrape_timeout: 20s
+  scrape_interval: 4m
+  scrape_timeout: 30s
 
 scrape_configs:
   - job_name: trello
